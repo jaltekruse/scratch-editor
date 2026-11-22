@@ -48,7 +48,8 @@ const saveTargetId = id => {
  * Convert a Scratch project to an Arduboy sketch.
  * @param {ArrayBuffer} sb3 The project file.
  * @returns {Promise<{files: Array<{path: string, contents: string}>, skipped: Array<object>}>} Sketch files (the
- *     primary file is `project.ino`), and the `{target, costume}` pairs left out because they are too large.
+ *     primary file is `project.ino`), and the `{target, costume}` pairs replaced by blank images because they are
+ *     too large.
  */
 const convertProjectToSketch = async sb3 => {
     const project = await Project.fromSb3(sb3);

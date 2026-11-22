@@ -219,8 +219,8 @@ const ArduboyModalComponent = ({
                 {skippedCostumes.length ? (
                     <p className={styles.warning}>
                         <FormattedMessage
-                            defaultMessage="These costumes are too large for the Arduboy and were left out: {costumes}. Blocks that switch to them won't work." // eslint-disable-line @stylistic/max-len
-                            description="Warning listing costumes (as 'sprite: costume') that were too big to convert for the Arduboy" // eslint-disable-line @stylistic/max-len
+                            defaultMessage="These costumes are too large for the Arduboy and will appear blank: {costumes}." // eslint-disable-line @stylistic/max-len
+                            description="Warning listing costumes (as 'sprite: costume') that were too big to convert for the Arduboy and were replaced by blank images" // eslint-disable-line @stylistic/max-len
                             id="gui.arduboyModal.skippedCostumes"
                             values={{
                                 costumes: skippedCostumes.map(({target, costume}) => `${target}: ${costume}`).join(', ')
