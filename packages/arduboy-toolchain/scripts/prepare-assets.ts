@@ -223,7 +223,21 @@ function writePack(outDir: string, name: string, files: FileSet): string {
   return name
 }
 
+/** Fail with setup instructions when the vendor/ submodules haven't been checked out. */
+function checkSubmodules(): void {
+  const required = [path.join(boardPackageDir, 'cores/arduboy'), ...LIBRARIES.map((lib) => lib.dir)]
+  const missing = required.filter((dir) => !fs.existsSync(dir))
+  if (missing.length) {
+    throw new Error(
+      `Arduboy sources are missing (git submodules not checked out):\n` +
+        missing.map((dir) => `  ${path.relative(repoDir, dir)}`).join('\n') +
+        `\nRun this from the repository root, then build again:\n  git submodule update --init`,
+    )
+  }
+}
+
 async function main(): Promise<void> {
+  checkSubmodules()
   const outDir = path.resolve(options.out)
   const targets = options.target ? options.target.map(getTarget) : TARGETS
   fs.mkdirSync(outDir, { recursive: true })
