@@ -82,6 +82,7 @@ const ArduboyModalComponent = ({
     maxRamBytes,
     serialSupported,
     showBootloaderButton,
+    skippedCostumes,
     step,
     targetId,
     targets
@@ -215,6 +216,18 @@ const ArduboyModalComponent = ({
                         />
                     </p>
                 ) : null}
+                {skippedCostumes.length ? (
+                    <p className={styles.warning}>
+                        <FormattedMessage
+                            defaultMessage="These costumes are too large for the Arduboy and were left out: {costumes}. Blocks that switch to them won't work." // eslint-disable-line @stylistic/max-len
+                            description="Warning listing costumes (as 'sprite: costume') that were too big to convert for the Arduboy" // eslint-disable-line @stylistic/max-len
+                            id="gui.arduboyModal.skippedCostumes"
+                            values={{
+                                costumes: skippedCostumes.map(({target, costume}) => `${target}: ${costume}`).join(', ')
+                            }}
+                        />
+                    </p>
+                ) : null}
                 {error ? <p className={styles.warning}>{error}</p> : null}
                 {diagnostics ? <pre className={styles.log}>{diagnostics}</pre> : null}
             </div>
@@ -239,6 +252,10 @@ ArduboyModalComponent.propTypes = {
     ramBytes: PropTypes.number,
     serialSupported: PropTypes.bool.isRequired,
     showBootloaderButton: PropTypes.bool.isRequired,
+    skippedCostumes: PropTypes.arrayOf(PropTypes.shape({
+        target: PropTypes.string.isRequired,
+        costume: PropTypes.string.isRequired
+    })).isRequired,
     step: PropTypes.oneOf(Object.keys(STEP_MESSAGES)),
     targetId: PropTypes.string.isRequired,
     targets: PropTypes.arrayOf(PropTypes.shape({

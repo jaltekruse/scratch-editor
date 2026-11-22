@@ -46,6 +46,7 @@ const ArduboyModal = ({onRequestClose, projectTitle, visible, vm}) => {
     const [error, setError] = useState(null);
     const [diagnostics, setDiagnostics] = useState('');
     const [size, setSize] = useState(null);
+    const [skippedCostumes, setSkippedCostumes] = useState([]);
     const [showBootloaderButton, setShowBootloaderButton] = useState(false);
     // Settles the promise returned to uploadFirmware's requestBootloaderPort callback.
     const bootloaderRequest = useRef(null);
@@ -71,7 +72,9 @@ const ArduboyModal = ({onRequestClose, projectTitle, visible, vm}) => {
     const convert = useCallback(async () => {
         setStep('converting');
         const sb3 = await vm.saveProjectSb3();
-        return convertProjectToSketch(await sb3.arrayBuffer());
+        const {files, skipped} = await convertProjectToSketch(await sb3.arrayBuffer());
+        setSkippedCostumes(skipped);
+        return files;
     }, [vm]);
 
     const build = useCallback(async () => {
@@ -89,6 +92,7 @@ const ArduboyModal = ({onRequestClose, projectTitle, visible, vm}) => {
         setError(null);
         setDiagnostics('');
         setSize(null);
+        setSkippedCostumes([]);
         setProgress(null);
         try {
             await task();
@@ -176,6 +180,7 @@ const ArduboyModal = ({onRequestClose, projectTitle, visible, vm}) => {
             ramBytes={size && size.ramBytes}
             serialSupported={serialSupported}
             showBootloaderButton={showBootloaderButton}
+            skippedCostumes={skippedCostumes}
             step={step}
             targetId={targetId}
             targets={TARGETS}

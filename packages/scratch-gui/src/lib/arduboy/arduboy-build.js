@@ -47,15 +47,16 @@ const saveTargetId = id => {
 /**
  * Convert a Scratch project to an Arduboy sketch.
  * @param {ArrayBuffer} sb3 The project file.
- * @returns {Promise<Array<{path: string, contents: string}>>} Sketch files; the primary file is `project.ino`.
+ * @returns {Promise<{files: Array<{path: string, contents: string}>, skipped: Array<object>}>} Sketch files (the
+ *     primary file is `project.ino`), and the `{target, costume}` pairs left out because they are too large.
  */
 const convertProjectToSketch = async sb3 => {
     const project = await Project.fromSb3(sb3);
-    const files = await toArduboy(project, {rasterize: browserRasterizer});
-    return Object.entries(files)
-        // The converter also emits a Leopard web page, which is not part of the sketch.
-        .filter(([path]) => !path.endsWith('.html'))
-        .map(([path, contents]) => ({path, contents}));
+    const {files, skipped} = await toArduboy(project, {rasterize: browserRasterizer});
+    return {
+        files: Object.entries(files).map(([path, contents]) => ({path, contents})),
+        skipped
+    };
 };
 
 /**
