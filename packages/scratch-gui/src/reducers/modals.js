@@ -1,7 +1,9 @@
 const OPEN_MODAL = 'scratch-gui/modals/OPEN_MODAL';
 const CLOSE_MODAL = 'scratch-gui/modals/CLOSE_MODAL';
 
+const MODAL_ARDUBOY = 'arduboyModal';
 const MODAL_BACKDROP_LIBRARY = 'backdropLibrary';
+const MODAL_BROWSER_PROJECTS = 'browserProjectsModal';
 const MODAL_COSTUME_LIBRARY = 'costumeLibrary';
 const MODAL_DEBUG = 'debugModal';
 const MODAL_EXTENSION_LIBRARY = 'extensionLibrary';
@@ -14,7 +16,9 @@ const MODAL_CONNECTION = 'connectionModal';
 const MODAL_TIPS_LIBRARY = 'tipsLibrary';
 
 const initialState = {
+    [MODAL_ARDUBOY]: false,
     [MODAL_BACKDROP_LIBRARY]: false,
+    [MODAL_BROWSER_PROJECTS]: false,
     [MODAL_COSTUME_LIBRARY]: false,
     [MODAL_DEBUG]: false,
     [MODAL_EXTENSION_LIBRARY]: false,
@@ -54,8 +58,14 @@ const closeModal = function (modal) {
         modal: modal
     };
 };
+const openArduboyModal = function () {
+    return openModal(MODAL_ARDUBOY);
+};
 const openBackdropLibrary = function () {
     return openModal(MODAL_BACKDROP_LIBRARY);
+};
+const openBrowserProjectsModal = function () {
+    return openModal(MODAL_BROWSER_PROJECTS);
 };
 const openCostumeLibrary = function () {
     return openModal(MODAL_COSTUME_LIBRARY);
@@ -87,8 +97,14 @@ const openConnectionModal = function () {
 const openTipsLibrary = function () {
     return openModal(MODAL_TIPS_LIBRARY);
 };
+const closeArduboyModal = function () {
+    return closeModal(MODAL_ARDUBOY);
+};
 const closeBackdropLibrary = function () {
     return closeModal(MODAL_BACKDROP_LIBRARY);
+};
+const closeBrowserProjectsModal = function () {
+    return closeModal(MODAL_BROWSER_PROJECTS);
 };
 const closeCostumeLibrary = function () {
     return closeModal(MODAL_COSTUME_LIBRARY);
@@ -123,7 +139,9 @@ const closeConnectionModal = function () {
 export {
     reducer as default,
     initialState as modalsInitialState,
+    openArduboyModal,
     openBackdropLibrary,
+    openBrowserProjectsModal,
     openCostumeLibrary,
     openDebugModal,
     openExtensionLibrary,
@@ -134,7 +152,9 @@ export {
     openTelemetryModal,
     openTipsLibrary,
     openConnectionModal,
+    closeArduboyModal,
     closeBackdropLibrary,
+    closeBrowserProjectsModal,
     closeCostumeLibrary,
     closeDebugModal,
     closeExtensionLibrary,

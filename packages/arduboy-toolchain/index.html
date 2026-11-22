@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arduboy Toolchain Demo</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 1rem auto;
+        max-width: 60rem;
+        padding: 0 1rem;
+      }
+      textarea {
+        box-sizing: border-box;
+        font-family: ui-monospace, monospace;
+        height: 22rem;
+        width: 100%;
+      }
+      pre {
+        background: #f4f4f4;
+        max-height: 20rem;
+        overflow: auto;
+        padding: 0.5rem;
+        white-space: pre-wrap;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0.5rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Arduboy toolchain demo</h1>
+    <p>
+      Compiles an Arduboy sketch in the browser and uploads it over Web Serial. Run <code>npm run build</code> first
+      so <code>dist/toolchain/</code> exists.
+    </p>
+    <textarea id="source" spellcheck="false">
+#include &lt;Arduboy2.h&gt;
+
+Arduboy2 arduboy;
+
+void setup() {
+  arduboy.begin();
+  arduboy.setFrameRate(30);
+}
+
+void loop() {
+  if (!arduboy.nextFrame()) return;
+  arduboy.clear();
+  arduboy.setCursor(10, 28);
+  arduboy.print(F("Hello, Arduboy!"));
+  arduboy.display();
+}
+</textarea>
+    <div class="controls">
+      <select id="target"></select>
+      <button id="compile">Compile</button>
+      <button id="upload" disabled>Upload</button>
+      <button id="bootloader" hidden>Select bootloader port</button>
+    </div>
+    <pre id="log"></pre>
+    <script type="module">
+      import { ArduboyCompiler, SERIAL_PORT_FILTERS, TARGETS, uploadFirmware } from './src/index.ts'
+
+      const $ = (id) => document.getElementById(id)
+      const log = (line) => {
+        $('log').textContent += `${line}\n`
+      }
+      for (const target of TARGETS) $('target').add(new Option(target.name, target.id))
+
+      const compiler = new ArduboyCompiler({ assetsBase: './dist/toolchain/' })
+      window.compiler = compiler
+      let hex
+
+      $('compile').onclick = async () => {
+        $('log').textContent = ''
+        $('upload').disabled = true
+        log('Compiling…')
+        const result = await compiler.compile({
+          target: $('target').value,
+          files: [{ path: 'sketch.ino', contents: $('source').value }],
+        })
+        if (result.diagnostics) log(result.diagnostics)
+        if (result.ok) {
+          hex = result.hex
+          log(
+            `Done in ${Math.round(result.timings.total)} ms: ${result.flashBytes} bytes flash, ${result.ramBytes} bytes RAM`,
+          )
+          $('upload').disabled = !('serial' in navigator)
+        } else {
+          log('Compilation failed.')
+        }
+      }
+
+      $('upload').onclick = async () => {
+        try {
+          const port = await navigator.serial.requestPort({ filters: SERIAL_PORT_FILTERS })
+          await uploadFirmware({
+            port,
+            hex,
+            onStatus: (status) =>
+              log(status.step === 'programming' ? `${status.phase} ${status.done}/${status.total}` : status.step),
+            requestBootloaderPort: () =>
+              new Promise((resolve, reject) => {
+                log('Bootloader is running: click "Select bootloader port" and choose it.')
+                $('bootloader').hidden = false
+                $('bootloader').onclick = () => {
+                  $('bootloader').hidden = true
+                  navigator.serial.requestPort({ filters: SERIAL_PORT_FILTERS }).then(resolve, reject)
+                }
+              }),
+          })
+        } catch (error) {
+          log(`Upload failed: ${error.message}`)
+        }
+      }
+    </script>
+  </body>
+</html>

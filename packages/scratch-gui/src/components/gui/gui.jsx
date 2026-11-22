@@ -42,6 +42,8 @@ import styles from './gui.css';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
+import ArduboyModal from '../../containers/arduboy-modal.jsx';
+import BrowserProjectsModal from '../../containers/browser-projects-modal.jsx';
 import DebugModal from '../debug-modal/debug-modal.jsx';
 import {setPlatform} from '../../reducers/platform.js';
 import {setTheme} from '../../reducers/settings.js';
@@ -325,6 +327,8 @@ const GUIComponent = props => {
                         isOpen={debugModalVisible}
                         onClose={onCloseDebugModal}
                     />}
+                    <ArduboyModal />
+                    <BrowserProjectsModal />
                     {backdropLibraryVisible ? (
                         <BackdropLibrary
                             vm={vm}

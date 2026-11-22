@@ -68,6 +68,7 @@ rejected by the pre-commit hook.
 
 ```text
 packages/
+├── arduboy-toolchain/      In-browser Arduboy compiler (WebAssembly AVR GCC) and Web Serial uploader
 ├── scratch-gui/            React-based editor UI
 ├── scratch-vm/             Virtual machine that runs Scratch projects
 ├── scratch-render/         WebGL renderer for the stage
@@ -75,18 +76,27 @@ packages/
 ├── task-herder/            Async task scheduler with rate limiting
 └── scratch-media-lib-scripts/  Build scripts for media library assets
 scripts/                    Monorepo-level utility scripts
+vendor/                     Git submodules (run `git submodule update --init`)
+├── scratch_arduboy/        Scratch → Arduboy C++ converter (fork of sb-edit; npm workspace `sb-edit`)
+├── Arduboy-homemade-package/  Arduboy core, libraries and hardware wiring docs
+├── AceRoutine/             Coroutine library used by converted projects
+└── AceCommon/              Dependency of AceRoutine
 ```
+
+Changes to a submodule are committed in that submodule's own repository; the monorepo only records the commit.
 
 ## Packages at a glance
 
 | Package | Language | Bundler | Tests |
 | - | - | - | - |
+| `arduboy-toolchain` | TypeScript | Vite | Vitest |
 | `scratch-gui` | JavaScript / JSX (some TypeScript) | webpack | Jest |
 | `scratch-vm` | JavaScript | webpack | Tap |
 | `scratch-render` | JavaScript | webpack | Tap |
 | `scratch-svg-renderer` | JavaScript | webpack | Tap |
 | `task-herder` | TypeScript | Vite | Vitest |
 | `scratch-media-lib-scripts` | JavaScript | — | Jest |
+| `vendor/scratch_arduboy` (`sb-edit`) | TypeScript | tsc | Jest |
 
 `task-herder` represents the target stack for new packages (TypeScript + Vite + Vitest). The other packages
 reflect the legacy stack and are being migrated incrementally.

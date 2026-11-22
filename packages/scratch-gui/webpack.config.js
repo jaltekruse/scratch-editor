@@ -113,6 +113,11 @@ const baseConfig = new ScratchWebpackConfigBuilder(
             {
                 from: '../../node_modules/@mediapipe/face_detection',
                 to: 'chunks/mediapipe/face_detection'
+            },
+            {
+                // Compiler worker and assets for "Upload to Arduboy"; see src/lib/arduboy/arduboy-build.js
+                from: '../../node_modules/@scratch/arduboy-toolchain/dist/toolchain',
+                to: 'static/arduboy-toolchain'
             }
         ]
     }));

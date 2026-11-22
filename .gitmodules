@@ -1,0 +1,12 @@
+[submodule "vendor/scratch_arduboy"]
+	path = vendor/scratch_arduboy
+	url = https://github.com/jaltekruse/scratch_arduboy.git
+[submodule "vendor/Arduboy-homemade-package"]
+	path = vendor/Arduboy-homemade-package
+	url = https://github.com/jaltekruse/Arduboy-homemade-package.git
+[submodule "vendor/AceRoutine"]
+	path = vendor/AceRoutine
+	url = https://github.com/bxparks/AceRoutine.git
+[submodule "vendor/AceCommon"]
+	path = vendor/AceCommon
+	url = https://github.com/bxparks/AceCommon.git

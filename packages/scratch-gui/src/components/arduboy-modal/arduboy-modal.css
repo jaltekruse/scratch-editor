@@ -1,0 +1,90 @@
+@import "../../css/colors.css";
+@import "../../css/units.css";
+
+.modal-content {
+    width: 600px;
+}
+
+.body {
+    background: $ui-white;
+    padding: 1rem 1.5rem 1.5rem;
+    color: $text-primary;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.label {
+    font-weight: bold;
+}
+
+.select {
+    flex-grow: 1;
+    padding: 0.375rem;
+    border: 1px solid $ui-black-transparent;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    background: $motion-primary;
+    color: $ui-white;
+    font-weight: bold;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.secondary-button {
+    composes: button;
+    background: $ui-white;
+    color: $motion-primary;
+    border: 1px solid $motion-primary;
+}
+
+.attention-button {
+    composes: button;
+    background: $ui-orange;
+}
+
+.note {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+}
+
+.warning {
+    composes: note;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    background: $ui-alert-orange;
+}
+
+.progress {
+    width: 100%;
+    margin-bottom: 0.75rem;
+}
+
+.log {
+    max-height: 14rem;
+    margin: 0;
+    padding: 0.5rem;
+    overflow: auto;
+    border-radius: 0.25rem;
+    background: $ui-secondary;
+    font-family: monospace;
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    user-select: text;
+}

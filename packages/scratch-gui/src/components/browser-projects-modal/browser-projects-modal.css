@@ -1,0 +1,85 @@
+@import "../../css/colors.css";
+
+.modal-content {
+    width: 600px;
+}
+
+.body {
+    background: $ui-white;
+    padding: 1rem 1.5rem 1.5rem;
+    color: $text-primary;
+}
+
+.save-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.title-input {
+    flex-grow: 1;
+    padding: 0.375rem;
+    border: 1px solid $ui-black-transparent;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.button {
+    padding: 0.375rem 0.75rem;
+    border: none;
+    border-radius: 0.25rem;
+    background: $motion-primary;
+    color: $ui-white;
+    font-weight: bold;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.delete-button {
+    composes: button;
+    background: $ui-white;
+    color: $red-tertiary;
+    border: 1px solid $red-tertiary;
+}
+
+.list {
+    max-height: 20rem;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    list-style: none;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid $ui-black-transparent-10;
+}
+
+.item-text {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.item-title {
+    overflow: hidden;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item-details {
+    font-size: 0.75rem;
+}
+
+.message {
+    font-size: 0.875rem;
+}

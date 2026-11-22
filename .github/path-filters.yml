@@ -18,6 +18,9 @@ any-workspace:
 task-herder:
   - *global
   - "packages/task-herder/**"
+arduboy-toolchain:
+  - *global
+  - "packages/arduboy-toolchain/**"
 scratch-storage:
   - *global
   - "packages/scratch-storage/**"
@@ -40,8 +43,12 @@ scratch-vm:
   - "packages/scratch-svg-renderer/**"
   - "packages/scratch-vm/**"
   - "packages/task-herder/**"
+scratch_arduboy:
+  - *global
+  - "vendor/scratch_arduboy/**"
 scratch-gui:
   - *global
+  - "packages/arduboy-toolchain/**"
   - "packages/scratch-gui/**"
   - "packages/scratch-paint/**"
   - "packages/scratch-render/**"
@@ -49,6 +56,7 @@ scratch-gui:
   - "packages/scratch-svg-renderer/**"
   - "packages/scratch-vm/**"
   - "packages/task-herder/**"
+  - "vendor/scratch_arduboy/**"
 scratch-media-lib-scripts:
   - *global
   - "packages/scratch-media-lib-scripts/**"

@@ -16,11 +16,13 @@
   "author": "Scratch Foundation",
   "workspaces": [
     "packages/task-herder",
+    "packages/arduboy-toolchain",
     "packages/scratch-storage",
     "packages/scratch-svg-renderer",
     "packages/scratch-paint",
     "packages/scratch-render",
     "packages/scratch-vm",
+    "vendor/scratch_arduboy",
     "packages/scratch-gui",
     "packages/scratch-media-lib-scripts"
   ],

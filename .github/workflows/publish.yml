@@ -119,6 +119,9 @@ jobs:
       packages: ${{ steps.list-packages.outputs.packages }}
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          # The Arduboy packages build from sources in vendor/ submodules.
+          submodules: true
 
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
@@ -247,6 +250,9 @@ jobs:
 
       - name: Publish scratch-paint
         run: npm publish --access=public --tag="$NPM_TAG" --ignore-scripts --workspace=@scratch/scratch-paint
+
+      - name: Publish arduboy-toolchain
+        run: npm publish --access=public --tag="$NPM_TAG" --ignore-scripts --workspace=@scratch/arduboy-toolchain
 
     # update-gha-workflows.ts: insert new "Publish <package>" steps before this line.
 

@@ -10,6 +10,8 @@ packages. Use this if you'd like to learn about how the Scratch editor works or 
 
 The `packages` directory in this repository contains:
 
+- `arduboy-toolchain` compiles Arduboy sketches to firmware and uploads them to Arduboy-compatible hardware over Web
+  Serial, entirely in the browser.
 - `scratch-gui` provides the buttons, menus, and other elements that you interact with when creating and editing a
   project. It's also the "glue" that brings most of the other modules together at runtime.
 - `scratch-media-lib-scripts` builds (or rebuilds) media libraries for the editor.
@@ -22,6 +24,11 @@ The `packages` directory in this repository contains:
 - `task-herder` manages queues of tasks with throttling and concurrency limits.
 
 _Please add to this list as more packages are migrated to the monorepo._
+
+The `vendor` directory holds git submodules used to build Arduboy support: `scratch_arduboy` (a fork of `sb-edit`
+that converts Scratch projects to Arduboy C++, also an npm workspace), the Arduboy homemade board package (core,
+libraries and wiring documentation), and the AceRoutine/AceCommon libraries. Clone with `--recurse-submodules`, or
+run `git submodule update --init` after cloning.
 
 Each package has its own `README.md` file with more information about that package.
 

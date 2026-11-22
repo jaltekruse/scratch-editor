@@ -14,6 +14,7 @@ import useMenuNavigation from '../../hooks/use-menu-navigation';
 
 import sharedMessages from '../../lib/shared-messages';
 
+import {openArduboyModal, openBrowserProjectsModal} from '../../reducers/modals';
 import {saveProjectAsCopy} from '../../reducers/project-state';
 
 const fileMenu = defineMessage({
@@ -27,6 +28,8 @@ const FileMenu = ({
     canSave,
     canCreateCopy,
     canRemix,
+    onClickArduboy,
+    onClickBrowserProjects,
     onClickNew,
     onClickSave,
     onClickSaveAsCopy,
@@ -161,6 +164,30 @@ const FileMenu = ({
                         </MenuItem>
                     )}</SB3Downloader>
                 </MenuSection>
+                <MenuSection>
+                    <MenuItem
+                        onClick={onClickBrowserProjects}
+                        isDataMenuItem
+                        onParentKeyDown={handleKeyDownOpenMenu}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Projects saved in this browser"
+                            description="Menu bar item for saving and opening projects stored in the browser"
+                            id="gui.menuBar.browserProjects"
+                        />
+                    </MenuItem>
+                    <MenuItem
+                        onClick={onClickArduboy}
+                        isDataMenuItem
+                        onParentKeyDown={handleKeyDownOpenMenu}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Upload to Arduboy"
+                            description="Menu bar item for building the project as an Arduboy game and uploading it"
+                            id="gui.menuBar.uploadToArduboy"
+                        />
+                    </MenuItem>
+                </MenuSection>
             </MenuBarMenu>
         </button>
     );
@@ -172,6 +199,8 @@ FileMenu.propTypes = {
     canCreateCopy: PropTypes.bool.isRequired,
     canRemix: PropTypes.bool.isRequired,
     onStartSelectingFileUpload: PropTypes.func.isRequired,
+    onClickArduboy: PropTypes.func.isRequired,
+    onClickBrowserProjects: PropTypes.func.isRequired,
     onClickSave: PropTypes.func,
     onClickSaveAsCopy: PropTypes.func,
     onClickRemix: PropTypes.func,
@@ -186,6 +215,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    onClickArduboy: () => dispatch(openArduboyModal()),
+    onClickBrowserProjects: () => dispatch(openBrowserProjectsModal()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy())
 });
 
