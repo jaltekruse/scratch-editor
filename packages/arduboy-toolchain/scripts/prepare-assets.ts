@@ -11,7 +11,7 @@
  * Precompiling uses the same WebAssembly toolchain under Node.js, so objects match what the browser produces and
  * no native AVR toolchain is required.
  *
- * Usage: node scripts/prepare-assets.ts [--out <dir>] [--target <id>...]
+ * Usage: npm run prepare-assets -- [--out <dir>] [--target <id>...]
  */
 import fs from 'node:fs'
 import os from 'node:os'

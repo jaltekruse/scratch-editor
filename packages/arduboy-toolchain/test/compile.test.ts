@@ -29,9 +29,13 @@ function assetsDir(): string {
     // Not built yet.
   }
   const fresh = path.join(packageDir, 'test-results/toolchain')
-  execFileSync(process.execPath, [path.join(packageDir, 'scripts/prepare-assets.ts'), '--out', fresh], {
-    stdio: 'inherit',
-  })
+  execFileSync(
+    process.execPath,
+    ['--import', 'tsx', path.join(packageDir, 'scripts/prepare-assets.ts'), '--out', fresh],
+    {
+      stdio: 'inherit',
+    },
+  )
   return fresh
 }
 
