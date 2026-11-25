@@ -33,6 +33,9 @@ const messages = defineMessages({
 
 class CompileError extends Error {}
 
+/** The user closed the device chooser; the upload stops without an error message. */
+class UploadCancelled extends Error {}
+
 const sketchName = title => (title || 'Project').replace(/[^A-Za-z0-9_]/g, '_');
 
 const serialSupported = typeof navigator !== 'undefined' && 'serial' in navigator;
@@ -47,9 +50,10 @@ const ArduboyModal = ({onRequestClose, projectTitle, visible, vm}) => {
     const [diagnostics, setDiagnostics] = useState('');
     const [size, setSize] = useState(null);
     const [skippedCostumes, setSkippedCostumes] = useState([]);
-    const [showBootloaderButton, setShowBootloaderButton] = useState(false);
-    // Settles the promise returned to uploadFirmware's requestBootloaderPort callback.
-    const bootloaderRequest = useRef(null);
+    // Which serial port the dialog is waiting for the user to choose with a button: 'device' or 'bootloader'.
+    const [portRequest, setPortRequest] = useState(null);
+    // Settles the promise of the pending port request.
+    const pendingPortRequest = useRef(null);
 
     useEffect(() => {
         if (!visible) return;
@@ -62,9 +66,9 @@ const ArduboyModal = ({onRequestClose, projectTitle, visible, vm}) => {
             log.warn('Arduboy compiler is unavailable', e);
         }
         return () => {
-            if (bootloaderRequest.current) {
-                bootloaderRequest.current.reject(new Error('Upload cancelled'));
-                bootloaderRequest.current = null;
+            if (pendingPortRequest.current) {
+                pendingPortRequest.current.reject(new UploadCancelled());
+                pendingPortRequest.current = null;
             }
         };
     }, [visible]);
@@ -101,52 +105,66 @@ const ArduboyModal = ({onRequestClose, projectTitle, visible, vm}) => {
             setProgress(null);
             if (e instanceof CompileError) {
                 setError(e.message);
+            } else if (e instanceof UploadCancelled) {
+                setDiagnostics('');
             } else {
                 log.error('Arduboy build or upload failed', e);
                 setError(intl.formatMessage(messages.failed, {message: e.message}));
             }
         } finally {
             setBusy(false);
-            setShowBootloaderButton(false);
+            setPortRequest(null);
         }
     }, [intl]);
 
-    const handleUpload = useCallback(async () => {
+    /**
+     * Have the user choose a serial port with a button, for when the browser no longer counts the original click as
+     * a user gesture (the device chooser can only open in response to one).
+     * @param {string} kind Which port is wanted: 'device' or 'bootloader'.
+     * @returns {Promise<SerialPort>} The chosen port.
+     */
+    const askForPortWithButton = useCallback(kind => new Promise((resolve, reject) => {
+        pendingPortRequest.current = {resolve, reject};
+        setPortRequest(kind);
+    }), []);
+
+    const handleUpload = useCallback(() => run(async () => {
+        // Build first, so the device is only contacted once there's something to upload.
+        const hex = await build();
         let port;
         try {
-            // Must happen first, while the click still counts as a user gesture.
             port = await navigator.serial.requestPort({filters: SERIAL_PORT_FILTERS});
         } catch (e) {
-            return; // The user closed the device chooser.
+            if (e.name === 'NotFoundError') throw new UploadCancelled();
+            // The build outlasted the click's user activation (e.g. while the compiler was still downloading).
+            if (e.name !== 'SecurityError') throw e;
+            port = await askForPortWithButton('device');
         }
-        await run(async () => {
-            const hex = await build();
-            await uploadFirmware({
-                port,
-                hex,
-                onStatus: status => {
-                    if (status.step === 'programming') {
-                        setStep(status.phase);
-                        setProgress(status.done / status.total);
-                    } else {
-                        setStep(status.step);
-                        setProgress(null);
-                    }
-                },
-                requestBootloaderPort: () => new Promise((resolve, reject) => {
-                    bootloaderRequest.current = {resolve, reject};
-                    setShowBootloaderButton(true);
-                })
-            });
+        await uploadFirmware({
+            port,
+            hex,
+            onStatus: status => {
+                if (status.step === 'programming') {
+                    setStep(status.phase);
+                    setProgress(status.done / status.total);
+                } else {
+                    setStep(status.step);
+                    setProgress(null);
+                }
+            },
+            requestBootloaderPort: () => askForPortWithButton('bootloader')
         });
-    }, [build, run]);
+    }), [askForPortWithButton, build, run]);
 
-    const handleSelectBootloaderPort = useCallback(() => {
-        const request = bootloaderRequest.current;
+    const handleChoosePort = useCallback(() => {
+        const request = pendingPortRequest.current;
         if (!request) return;
-        bootloaderRequest.current = null;
-        setShowBootloaderButton(false);
-        navigator.serial.requestPort({filters: SERIAL_PORT_FILTERS}).then(request.resolve, request.reject);
+        pendingPortRequest.current = null;
+        setPortRequest(null);
+        navigator.serial.requestPort({filters: SERIAL_PORT_FILTERS}).then(
+            request.resolve,
+            e => request.reject(e.name === 'NotFoundError' ? new UploadCancelled() : e)
+        );
     }, []);
 
     const handleDownloadHex = useCallback(() => run(async () => {
@@ -179,7 +197,7 @@ const ArduboyModal = ({onRequestClose, projectTitle, visible, vm}) => {
             progress={progress}
             ramBytes={size && size.ramBytes}
             serialSupported={serialSupported}
-            showBootloaderButton={showBootloaderButton}
+            portRequest={portRequest}
             skippedCostumes={skippedCostumes}
             step={step}
             targetId={targetId}
@@ -188,7 +206,7 @@ const ArduboyModal = ({onRequestClose, projectTitle, visible, vm}) => {
             onDownloadHex={handleDownloadHex}
             onDownloadSketch={handleDownloadSketch}
             onRequestClose={onRequestClose}
-            onSelectBootloaderPort={handleSelectBootloaderPort}
+            onChoosePort={handleChoosePort}
             onUpload={handleUpload}
         />
     );

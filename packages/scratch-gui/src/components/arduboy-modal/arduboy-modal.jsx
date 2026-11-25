@@ -75,13 +75,13 @@ const ArduboyModalComponent = ({
     onDownloadHex,
     onDownloadSketch,
     onRequestClose,
-    onSelectBootloaderPort,
+    onChoosePort,
     onUpload,
     progress,
     ramBytes,
     maxRamBytes,
     serialSupported,
-    showBootloaderButton,
+    portRequest,
     skippedCostumes,
     step,
     targetId,
@@ -152,10 +152,22 @@ const ArduboyModalComponent = ({
                             id="gui.arduboyModal.upload"
                         />
                     </button>
-                    {showBootloaderButton ? (
+                    {portRequest === 'device' ? (
                         <button
                             className={styles.attentionButton}
-                            onClick={onSelectBootloaderPort}
+                            onClick={onChoosePort}
+                        >
+                            <FormattedMessage
+                                defaultMessage="Choose the device"
+                                description="Button shown when the game is built and the Arduboy must be chosen to start uploading" // eslint-disable-line @stylistic/max-len
+                                id="gui.arduboyModal.chooseDevice"
+                            />
+                        </button>
+                    ) : null}
+                    {portRequest === 'bootloader' ? (
+                        <button
+                            className={styles.attentionButton}
+                            onClick={onChoosePort}
                         >
                             <FormattedMessage
                                 defaultMessage="Select the device again"
@@ -187,7 +199,16 @@ const ArduboyModalComponent = ({
                         />
                     </button>
                 </div>
-                {showBootloaderButton ? (
+                {portRequest === 'device' ? (
+                    <p className={styles.warning}>
+                        <FormattedMessage
+                            defaultMessage="Your game is ready. Click “Choose the device” and pick your Arduboy to upload it." // eslint-disable-line @stylistic/max-len
+                            description="Shown when the game finished building but the browser needs another click before choosing the Arduboy" // eslint-disable-line @stylistic/max-len
+                            id="gui.arduboyModal.chooseDeviceHelp"
+                        />
+                    </p>
+                ) : null}
+                {portRequest === 'bootloader' ? (
                     <p className={styles.warning}>
                         <FormattedMessage
                             defaultMessage="The device restarted into programming mode. Click “Select the device again” and choose it within a few seconds." // eslint-disable-line @stylistic/max-len
@@ -246,12 +267,12 @@ ArduboyModalComponent.propTypes = {
     onDownloadHex: PropTypes.func.isRequired,
     onDownloadSketch: PropTypes.func.isRequired,
     onRequestClose: PropTypes.func.isRequired,
-    onSelectBootloaderPort: PropTypes.func.isRequired,
+    onChoosePort: PropTypes.func.isRequired,
     onUpload: PropTypes.func.isRequired,
     progress: PropTypes.number,
     ramBytes: PropTypes.number,
     serialSupported: PropTypes.bool.isRequired,
-    showBootloaderButton: PropTypes.bool.isRequired,
+    portRequest: PropTypes.oneOf(['device', 'bootloader']),
     skippedCostumes: PropTypes.arrayOf(PropTypes.shape({
         target: PropTypes.string.isRequired,
         costume: PropTypes.string.isRequired
